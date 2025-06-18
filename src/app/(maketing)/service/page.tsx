@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function service() {
   return (
 <div className="flex items-center justify-center h-screen">
