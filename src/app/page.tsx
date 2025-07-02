@@ -1,11 +1,12 @@
 import Carousel from "./components/carousel"
+import Cards from "./components/cards"
 
 export default function Home() {
   return (
     <>
       <Carousel />
-      <div className="flex items-center justify-center h-screen">
-        <h1 className="text-5xl">home page</h1>
+      <div className="mt-10">
+        <Cards />
       </div>
     </>
   );
