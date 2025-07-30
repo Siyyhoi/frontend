@@ -1,5 +1,5 @@
 'use client'
-import {  useState } from 'react';
+import {  useState , FormEvent } from 'react';
 import Swal from 'sweetalert2';
 export default function Register() {
   // const [email, setemail] = useState('');
@@ -11,7 +11,7 @@ export default function Register() {
   const [username, setusername] = useState('');
   const [firstname, setfirstname] = useState('');
 
-const handleSubmit = async (e) => {
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
 
     // const fullName = ${prefix} ${firstName} ${lastName};
