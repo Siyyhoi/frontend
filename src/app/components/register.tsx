@@ -1,5 +1,4 @@
 'use client'
-import { count } from 'console';
 import {  useState } from 'react';
 import Swal from 'sweetalert2';
 export default function Register() {
@@ -12,22 +11,58 @@ export default function Register() {
   const [username, setusername] = useState('');
   const [firstname, setfirstname] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-        // const fullName = `${prefix} ${firstName} ${lastName}`;
+    // const fullName = ${prefix} ${firstName} ${lastName};
 
+  try {
     const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
       method: 'POST',
       headers: {
-        Accept : 'application/json',
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({  firstname, fullname, lastname, username, password, address }),
+      body: JSON.stringify({ firstname, fullname, lastname, username, password, address }),
     });
 
     const result = await res.json();
     console.log(result);
-  };
+
+    if (res.ok) {
+      Swal.fire({
+        title: 'สำเร็จ!',
+        text: 'สมัครสมาชิกเรียบร้อยแล้ว',
+        icon: 'success',
+        confirmButtonText: 'ตกลง'
+      });
+      // รีเซ็ตฟอร์ม
+      setfirstname('');
+      setfullname('');
+      setlastname('');
+      setusername('');
+      setpassword('');
+      setaddress('');
+    } else {
+      Swal.fire({
+        title: 'เกิดข้อผิดพลาด',
+        text: result.message || 'ไม่สามารถสมัครสมาชิกได้',
+        icon: 'error',
+        confirmButtonText: 'ตกลง'
+      });
+    }
+  } catch (error) {
+    const err = error as Error;
+    Swal.fire({
+      title: 'ข้อผิดพลาดของระบบ',
+      text: err.message,
+      icon: 'error',
+      confirmButtonText: 'ตกลง'
+    });
+  }
+};
+
+
   return (
 <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
   <div className="text-center mb-6">
