@@ -29,21 +29,23 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     const result = await res.json();
     console.log(result);
 
-    if (res.ok) {
-      Swal.fire({
-        title: 'สำเร็จ!',
-        text: 'สมัครสมาชิกเรียบร้อยแล้ว',
-        icon: 'success',
-        confirmButtonText: 'ตกลง'
-      });
-      // รีเซ็ตฟอร์ม
-      setfirstname('');
-      setfullname('');
-      setlastname('');
-      setusername('');
-      setpassword('');
-      setaddress('');
-    } else {
+if (res.ok) {
+  Swal.fire({
+    title: 'สำเร็จ!',
+    text: 'สมัครสมาชิกเรียบร้อยแล้ว',
+    icon: 'success',
+    timer: 2000,
+    showConfirmButton: false
+  }).then(() => {
+    // ล้างข้อมูลหลังจาก Swal ปิด
+    setfirstname('');
+    setfullname('');
+    setlastname('');
+    setusername('');
+    setpassword('');
+    setaddress('');
+  });
+} else {
       Swal.fire({
         title: 'เกิดข้อผิดพลาด',
         text: result.message || 'ไม่สามารถสมัครสมาชิกได้',
