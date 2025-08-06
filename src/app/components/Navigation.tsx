@@ -104,15 +104,7 @@ export default function Navigation() {
                 {/* Register Card Back */}
                 <div className="absolute w-full h-full rotate-y-180 backface-hidden">
                   <Register />
-                  {/* <div className="text-center mt-4">
-                    <button
-                      onClick={() => setIsRegister(false)}
-                      className="text-sm text-blue-600 hover:underline"
-                    >
-                      มีบัญชีอยู่แล้ว? กลับไปล็อกอิน
-                    </button>
-                  </div> */}
-                </div>
+                </div> 
               </div>
             </motion.div>
           </motion.div>
