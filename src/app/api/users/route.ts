@@ -24,3 +24,36 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    
+    const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: 'ไม่สามารถสมัครสมาชิกได้', message: data.message },
+        { status: res.status }
+      );
+    }
+
+    return NextResponse.json(data);
+    
+  } catch (error) {
+    console.error('Register error:', error);
+    return NextResponse.json(
+      { error: 'เกิดข้อผิดพลาดในการสมัครสมาชิก' },
+      { status: 500 }
+    );
+  }
+}

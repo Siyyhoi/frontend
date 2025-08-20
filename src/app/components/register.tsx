@@ -17,7 +17,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     // const fullName = ${prefix} ${firstName} ${lastName};
 
   try {
-    const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
+    const res = await fetch('/api/users', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
