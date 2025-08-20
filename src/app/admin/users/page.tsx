@@ -69,7 +69,7 @@ export default function UserPage() {
     if (!formData.id) return;
 
     try {
-      const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users', {
+      const res = await fetch('/api/users', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
