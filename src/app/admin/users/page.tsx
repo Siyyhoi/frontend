@@ -37,7 +37,7 @@ export default function UserPage() {
   const fetchUsers = async () => {
     try {
       setError(null);
-      const res = await fetch('http://itdev.cmtc.ac.th:3000/api/users');
+      const res = await fetch('/api/users');
       if (!res.ok) {
         throw new Error(`ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ (HTTP ${res.status})`);
       }
