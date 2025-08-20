@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import 'flowbite/dist/flowbite.min.css';
 import 'flowbite';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,12 +10,21 @@ import Login from './login';
 import Register from './register';
 
 export default function Navigation() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      import('flowbite');
+    setMounted(true);
+    // ตรวจสอบการล็อกอิน
+    const token = localStorage.getItem('token');
+    const storedUsername = localStorage.getItem('username');
+    if (token && storedUsername) {
+      setIsLoggedIn(true);
+      setUsername(storedUsername);
     }
   }, []);
 
@@ -49,14 +59,36 @@ export default function Navigation() {
       <Link href="#" className="text-sm font-medium text-gray-700 dark:text-white hover:text-blue-600 dark:hover:text-blue-400">Contact</Link>
     </div>
 
-    {/* Login/Register Button */}
+    {/* Login/Register Button or User Profile */}
     <div className="mt-4 md:mt-0">
-      <button
-        onClick={handleToggle}
-        className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none dark:focus:ring-blue-800"
-      >
-        Login / Register
-      </button>
+      {mounted && (
+        <>
+          {isLoggedIn ? (
+            <div className="flex items-center gap-4">
+              <span className="text-gray-700 dark:text-white">สวัสดี, {username}</span>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('username');
+                  setIsLoggedIn(false);
+                  setUsername('');
+                  router.push('/');
+                }}
+                className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2 dark:bg-red-500 dark:hover:bg-red-600 focus:outline-none dark:focus:ring-red-800"
+              >
+                ออกจากระบบ
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleToggle}
+              className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none dark:focus:ring-blue-800"
+            >
+              Login / Register
+            </button>
+          )}
+        </>
+      )}
     </div>
   </div>
 
@@ -98,8 +130,15 @@ export default function Navigation() {
                 }`}
               >
                 {/* Login Card Front */}
-                  <Login setIsRegister={setIsRegister}/>
-
+                  <Login 
+                    setIsRegister={setIsRegister}
+                    onLoginSuccess={() => {
+                      const storedUsername = localStorage.getItem('username');
+                      setIsLoggedIn(true);
+                      setUsername(storedUsername || '');
+                      setIsOpen(false);
+                    }}
+                  />
 
                 {/* Register Card Back */}
                 <div className="absolute w-full h-full rotate-y-180 backface-hidden">

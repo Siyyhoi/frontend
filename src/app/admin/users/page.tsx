@@ -3,6 +3,7 @@
 import { useEffect, useState, FormEvent } from 'react';
 import Swal from 'sweetalert2';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 type User = {
   id: string;
@@ -16,11 +17,21 @@ type User = {
 };
 
 export default function UserPage() {
+  const router = useRouter();
   const [items, setItems] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
-
   const [formData, setFormData] = useState<Partial<User>>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/');
+      return;
+    }
+    setIsLoading(false);
+  }, [router]);
 
 
   const fetchUsers = async () => {
@@ -87,6 +98,7 @@ export default function UserPage() {
           confirmButtonText: 'ตกลง',
         });
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -100,6 +112,14 @@ export default function UserPage() {
     setSelectedUser(null);
     setFormData({});
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">

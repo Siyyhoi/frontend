@@ -1,7 +1,80 @@
-export default function Login({ setIsRegister }: { setIsRegister: (value: boolean) => void }) {
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
+
+interface LoginProps {
+  setIsRegister: (value: boolean) => void;
+  onLoginSuccess?: () => void;
+}
+
+export default function Login({ setIsRegister, onLoginSuccess }: LoginProps) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Add loading animation while processing login
+    const formContainer = e.currentTarget.parentElement;
+    if (formContainer) {
+      formContainer.classList.add('animate-pulse');
+    }
+
+    try {
+      const res = await fetch('http://itdev.cmtc.ac.th:3000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+      
+      if (data.token) {
+        Swal.fire({
+          icon: 'success',
+          title: 'เข้าสู่ระบบสำเร็จ!',
+          text: 'ยินดีต้อนรับเข้าสู่ระบบ',
+          showConfirmButton: false,
+          timer: 800,
+        }).then(()=> {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('username', username);
+          if (onLoginSuccess) {
+            onLoginSuccess();
+          }
+          router.push('/admin/users');
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'เข้าสู่ระบบไม่สำเร็จ',
+          text: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+          confirmButtonText: 'ลองใหม่อีกครั้ง'
+        });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้',
+        confirmButtonText: 'ตกลง'
+      });
+    } finally {
+      if (formContainer) {
+        formContainer.classList.remove('animate-pulse');
+      }
+    }
+  };
+  
+
   return (
     <div className="flex items-center justify-center">
-      <form className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+      <form onSubmit={handleLogin} className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">เข้าสู่ระบบ</h1>
           <p className="text-gray-600 text-sm mt-2">ยินดีต้อนรับกลับ! กรุณาลงชื่อเข้าใช้เพื่อดำเนินการต่อ</p>
@@ -9,26 +82,30 @@ export default function Login({ setIsRegister }: { setIsRegister: (value: boolea
 
         <div className="relative z-0 w-full mb-5 group">
           <input
-            type="email"
-            name="floating_email"
-            id="floating_email"
+            type="text"
+            name="username"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
             required
           />
           <label
-            htmlFor="floating_email"
+            htmlFor="username"
             className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
-            อีเมล
+            ชื่อผู้ใช้
           </label>
         </div>
 
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="password"
-            name="floating_password"
-            id="floating_password"
+            name="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
             required
