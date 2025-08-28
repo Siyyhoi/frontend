@@ -1,17 +1,8 @@
 "use client"
 import { useState, useEffect } from "react"
 import Carousel from "./components/carousel"
-import Cards from "./components/cards"
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-[#0b0b0b] to-black text-gray-200 selection:bg-amber-500/30 relative overflow-hidden">
 
